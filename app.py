@@ -213,7 +213,7 @@ with st.sidebar:
     st.markdown("### 🟢 Platform Engine Status")
     st.markdown("• **Predictive ML**: Trained (IBM HR)")
     st.markdown("• **NLP Vector Model**: Online")
-    st.markdown("• **RAG Policy Docs**: 12 Active")
+    st.markdown("• **HR Policy Docs**: 12 Active")
     st.markdown("• **Gemini API**: Connected")
     
     st.markdown("---")
@@ -227,7 +227,7 @@ st.markdown("""
         <span>🤖 Agentic HRMS Platform</span>
     </div>
     <div class="brand-subtitle">
-        Enterprise Workforce Analytics • Attrition ML • Skill Gap Engine • RAG HR Policy Assistant
+        Enterprise Workforce Analytics • Attrition ML • Skill Gap Engine • HR Policy Assistant
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -239,7 +239,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "🧩 Skill Gap Engine",
     "🎓 Course Recommender",
     "🚀 Career Trajectory",
-    "📖 RAG HR Policy Q&A",
+    "📖 HR Policy Q&A",
     "🤖 Agentic Router"
 ])
 
@@ -504,7 +504,7 @@ with tab5:
 # TAB 6: RAG HR POLICY Q&A ASSISTANT (CLEAN FORM + SUBMIT BUTTON)
 # -----------------------------------------------------------------------------
 with tab6:
-    st.markdown("## 📖 RAG HR Policy Vector Search & LLM Assistant")
+    st.markdown("## 📖 HR Policy Vector Search & AI Assistant")
     st.write("Ask natural questions regarding corporate HR policies — vector embeddings retrieve grounded policy chunks instantly:")
     
     # Quick Sample Questions Chips
@@ -669,7 +669,7 @@ with tab7:
                 st.markdown(f"• 🔴 **[{r['priority']} Priority]** Skill: `{r['skill']}` ➔ Recommended Course: **{r['course']}**")
 
         else:
-            st.info("🔍 **Step 1 — Intent Classification:** Intent detected as `RAG HR Policy Q&A` (Confidence: 95.1%)")
+            st.info("🔍 **Step 1 — Intent Classification:** Intent detected as `HR Policy Q&A` (Confidence: 95.1%)")
             st.success("⚙️ **Step 2 — Engine Execution:** Routing query vector to `Policy Vector Search Index`...")
             
             st.success("💬 **Answer:** For official business travel, the company covers flights, hotel stays, and provides a daily food stipend of $75 per day. Receipts must be uploaded within 14 days of return.")
