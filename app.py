@@ -83,7 +83,7 @@ st.markdown("""
     [data-testid="stMetricValue"] {
         font-size: 1.9rem !important;
         font-weight: 800 !important;
-        color: #38BDF8 !important; /* Bright Cyan for high visibility */
+        color: #38BDF8 !important;
     }
     [data-testid="stMetricLabel"] {
         font-size: 0.95rem !important;
@@ -96,24 +96,6 @@ st.markdown("""
         padding: 1.1rem;
         border-radius: 12px;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Custom Recommendation Alert Cards */
-    .rec-card {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.15) 100%);
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        border-left: 6px solid #10B981;
-        padding: 1.2rem 1.5rem;
-        border-radius: 12px;
-        color: #E2E8F0;
-        margin-top: 1rem;
-    }
-    .rag-box {
-        background: rgba(30, 41, 59, 0.7);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        border-radius: 12px;
-        padding: 1.3rem;
-        margin-top: 1rem;
     }
     .metric-card {
         background: rgba(30, 41, 59, 0.5);
@@ -298,7 +280,6 @@ with tab1:
         
     df_org = pd.DataFrame(summary_data)
     
-    # Left: Plotly Interactive Chart, Right: Data Table (Hidden Index)
     col_chart, col_table = st.columns([1.1, 1])
     
     with col_chart:
@@ -324,13 +305,11 @@ with tab1:
         st.markdown("### 🏢 Role Capability Breakdown")
         st.dataframe(df_org, use_container_width=True, hide_index=True)
     
-    st.markdown("""
-    <div class="rec-card">
-        <strong>💡 Strategic Leadership Recommendation:</strong><br>
-        • Total Organizational Demand: <strong>115 headcount</strong> | Net Skill Gap Shortfall: <strong>74 roles</strong><br>
-        👉 <strong>Action Plan:</strong> Reskill <strong>48 internal employees</strong> via targeted LMS learning plans and externally hire <strong>26 senior specialists</strong>.
-    </div>
-    """, unsafe_allow_html=True)
+    st.success(
+        "**💡 Strategic Leadership Recommendation:**\n"
+        "• Total Organizational Demand: **115 headcount** | Net Skill Gap Shortfall: **74 roles**\n"
+        "👉 **Action Plan:** Reskill **48 internal employees** via targeted LMS learning plans and externally hire **26 senior specialists**."
+    )
 
 # -----------------------------------------------------------------------------
 # TAB 2: ATTRITION RISK PREDICTOR & EXPLAINABILITY
@@ -349,7 +328,6 @@ with tab2:
         commute = st.slider("Commute Distance (km)", 1, 30, 22)
         stock_options = st.selectbox("Stock Option Level", [0, 1, 2, 3])
         
-    # Calculate Risk Score dynamically
     risk_score = 15.0
     drivers = []
     if overtime == "Yes":
@@ -523,39 +501,44 @@ with tab5:
     st.markdown(f"3. **Stage 3 (Target Promotion):** Attain **{target_role}** role with projected readiness of **{proj_readiness:.1f}%**")
 
 # -----------------------------------------------------------------------------
-# TAB 6: RAG HR POLICY Q&A ASSISTANT (HIGHLY REALISTIC & INTERACTIVE)
+# TAB 6: RAG HR POLICY Q&A ASSISTANT (CLEAN FORM + SUBMIT BUTTON)
 # -----------------------------------------------------------------------------
 with tab6:
     st.markdown("## 📖 RAG HR Policy Vector Search & LLM Assistant")
     st.write("Ask natural questions regarding corporate HR policies — vector embeddings retrieve grounded policy chunks instantly:")
     
     # Quick Sample Questions Chips
-    st.markdown("#### 💡 Quick Click Sample Questions:")
+    st.markdown("#### 💡 Click Any Quick Sample Question:")
     sample_col1, sample_col2, sample_col3, sample_col4 = st.columns(4)
     
-    selected_sample = None
-    if sample_col1.button("💻 WFH Monitor Allowance", use_container_width=True):
+    selected_sample = ""
+    if sample_col1.button("💻 WFH Setup Allowance", use_container_width=True):
         selected_sample = "Can I get reimbursement for a home office monitor and desk?"
     if sample_col2.button("✈️ Business Travel Stipend", use_container_width=True):
         selected_sample = "What is our daily food stipend during business travel trips?"
-    if sample_col3.button("👶 Parental Leave Weeks", use_container_width=True):
+    if sample_col3.button("👶 Paid Parental Leave", use_container_width=True):
         selected_sample = "How many weeks of paid parental leave am I entitled to?"
-    if sample_col4.button("📜 Certification Reimbursement", use_container_width=True):
+    if sample_col4.button("📜 Certification Fees", use_container_width=True):
         selected_sample = "Can I claim reimbursement for Coursera subscriptions or exam fees?"
         
-    user_query = st.text_input(
-        "Type your HR policy question:",
-        value=selected_sample if selected_sample else "",
-        placeholder="e.g. What is the WFH setup allowance? How many days of notice period are required upon resignation?"
-    )
+    # Interactive Search Form with Explicit Submit Button
+    with st.form("rag_policy_form"):
+        user_query = st.text_input(
+            "Enter your question:",
+            value=selected_sample if selected_sample else "",
+            placeholder="e.g. What is the WFH setup allowance? How many days of notice period are required upon resignation?"
+        )
+        submit_policy = st.form_submit_button("🔍 Submit Question", type="primary", use_container_width=True)
+        
+    active_query = user_query if (submit_policy or selected_sample) else ""
     
-    doc_labels = list(POLICY_DOCS.keys())
-    doc_texts = list(POLICY_DOCS.values())
-    
-    if user_query:
-        with st.spinner("🔍 Querying Vector Embedding Index..."):
+    if active_query:
+        doc_labels = list(POLICY_DOCS.keys())
+        doc_texts = list(POLICY_DOCS.values())
+        
+        with st.spinner("🔍 Retrieving Grounded Corporate Policy Vector..."):
             if embed_model:
-                q_emb = embed_model.encode([user_query])
+                q_emb = embed_model.encode([active_query])
                 d_emb = embed_model.encode(doc_texts)
                 sims = cosine_similarity(q_emb, d_emb)[0]
                 best_idx = sims.argmax()
@@ -576,7 +559,7 @@ with tab6:
         if api_key:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={api_key}"
-                prompt = f"Answer the question in 2 friendly sentences using ONLY this policy text.\nPolicy ({best_label}): {best_text}\nQuestion: {user_query}"
+                prompt = f"Answer the question in 2 friendly sentences using ONLY this policy text.\nPolicy ({best_label}): {best_text}\nQuestion: {active_query}"
                 payload = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode('utf-8')
                 req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
                 res = urllib.request.urlopen(req)
@@ -587,50 +570,36 @@ with tab6:
                 
         # Smart synthesis fallback if API key is not present
         if not llm_answer:
-            if "monitor" in user_query.lower() or "laptop" in user_query.lower() or "wfh" in user_query.lower():
+            q_lower = active_query.lower()
+            if any(k in q_lower for k in ["monitor", "laptop", "desk", "wfh", "setup"]):
                 llm_answer = "Yes! The company provides a one-time work-from-home setup allowance of $500 for a monitor, ergonomic chair, and desk equipment upon uploading valid receipts within 30 days."
-            elif "travel" in user_query.lower() or "stipend" in user_query.lower() or "food" in user_query.lower():
+            elif any(k in q_lower for k in ["travel", "stipend", "food", "meal", "flight"]):
                 llm_answer = "For official business travel, flights and hotel stays are fully covered, along with a daily food stipend of $75 per day. Receipts must be uploaded within 14 days of return."
-            elif "parental" in user_query.lower() or "leave" in user_query.lower():
+            elif any(k in q_lower for k in ["parental", "maternity", "paternity", "child", "leave"]):
                 llm_answer = "Employees are entitled to 12 weeks of fully paid parental leave for the birth or adoption of a child, requested 30 days in advance via the HR portal."
-            elif "course" in user_query.lower() or "certification" in user_query.lower() or "coursera" in user_query.lower():
+            elif any(k in q_lower for k in ["course", "certification", "coursera", "udemy", "exam"]):
                 llm_answer = "Yes, employees receive up to $1,000 per year for professional courses, Coursera/Udemy subscriptions, and certification exam fees upon manager approval."
+            elif any(k in q_lower for k in ["notice", "resign", "resignation", "quit"]):
+                llm_answer = "The standard notice period upon formal resignation is 60 days. Early buyout or waiver requires written approval from HR and department head."
             else:
                 llm_answer = f"According to the official {best_label}, details regarding your query are available in the corporate HR portal."
 
-        # Render Executive RAG Card
-        st.markdown(f"""
-        <div class="rag-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
-                <span style="font-weight: 700; font-size: 1.1rem; color: #38BDF8;">📄 Source Document: {best_label}</span>
-                <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">
-                    🎯 Match Confidence: {score * 100:.1f}%
-                </span>
-            </div>
-            
-            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: 8px; border-left: 4px solid #38BDF8; margin-bottom: 1rem;">
-                <strong style="color: #F8FAFC; font-size: 1rem;">💬 Synthesized Answer:</strong><br>
-                <span style="color: #E2E8F0; font-size: 1.02rem;">{llm_answer}</span>
-            </div>
-            
-            <div style="color: #94A3B8; font-size: 0.92rem;">
-                <strong>📜 Official Corporate Excerpt:</strong><br>
-                <em>"{best_text}"</em>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # CLEAN NATIVE STREAMLIT OUTPUT (ZERO RAW HTML TAGS)
+        st.markdown(f"### 📄 Source Document: **{best_label}** *(🎯 Match Confidence: {score * 100:.1f}%)*")
+        st.success(f"**💬 Synthesized Answer:**\n\n{llm_answer}")
+        st.info(f"**📜 Official Corporate Policy Excerpt:**\n\n\"{best_text}\"")
 
 # -----------------------------------------------------------------------------
-# TAB 7: AGENTIC ROUTER CHATBOT (REALISTIC & INTERACTIVE WORKFLOW)
+# TAB 7: AGENTIC ROUTER CHATBOT (CLEAN FORM + SUBMIT BUTTON)
 # -----------------------------------------------------------------------------
 with tab7:
     st.markdown("## 🤖 Multi-Engine Intent Router & Unified Assistant")
     st.write("Enter any natural language prompt — the AI router detects intent and delegates to specialized engines automatically:")
     
-    st.markdown("#### 💡 Quick Click Test Intent Prompts:")
+    st.markdown("#### 💡 Click Any Test Prompt:")
     r_col1, r_col2, r_col3, r_col4 = st.columns(4)
     
-    selected_router_prompt = None
+    selected_router_prompt = ""
     if r_col1.button("📊 Show Leadership Heatmap", use_container_width=True):
         selected_router_prompt = "Show leadership org shortfall heatmap and headcount recommendation"
     if r_col2.button("⚠️ Evaluate Attrition Risk", use_container_width=True):
@@ -640,17 +609,21 @@ with tab7:
     if r_col4.button("📖 Travel Food Allowance", use_container_width=True):
         selected_router_prompt = "What is the daily food stipend during business travel?"
 
-    chat_prompt = st.text_input(
-        "Type your request:",
-        value=selected_router_prompt if selected_router_prompt else "",
-        placeholder="e.g. Show leadership headcount recommendation, or What is our travel food stipend?"
-    )
+    with st.form("router_request_form"):
+        chat_prompt = st.text_input(
+            "Type your request:",
+            value=selected_router_prompt if selected_router_prompt else "",
+            placeholder="e.g. Show leadership headcount recommendation, or What is our travel food stipend?"
+        )
+        submit_router = st.form_submit_button("🚀 Submit Request", type="primary", use_container_width=True)
+        
+    active_chat = chat_prompt if (submit_router or selected_router_prompt) else ""
     
-    if chat_prompt:
-        q = chat_prompt.lower()
+    if active_chat:
+        q = active_chat.lower()
         
         st.markdown("---")
-        st.markdown("### 🧠 Agent Execution Log")
+        st.markdown("### 🧠 Agent Execution Workflow")
         
         if any(w in q for w in ['org', 'heatmap', 'shortfall', 'hire', 'leadership', 'headcount']):
             st.info("🔍 **Step 1 — Intent Classification:** Intent detected as `Org Skill Heatmap` (Confidence: 98.4%)")
@@ -669,11 +642,7 @@ with tab7:
                 })
             df_router = pd.DataFrame(summary_data)
             st.dataframe(df_router, use_container_width=True, hide_index=True)
-            st.markdown("""
-            <div class="rec-card">
-                👉 <strong>Action Recommendation:</strong> Reskill 48 internal employees via targeted LMS learning plans and externally hire 26 senior specialists.
-            </div>
-            """, unsafe_allow_html=True)
+            st.success("👉 **Action Recommendation:** Reskill 48 internal employees via targeted LMS learning plans and externally hire 26 senior specialists.")
 
         elif any(w in q for w in ['attrition', 'resign', 'leave', 'quit', 'risk']):
             st.info("🔍 **Step 1 — Intent Classification:** Intent detected as `Attrition Risk Predictor` (Confidence: 96.8%)")
@@ -703,9 +672,5 @@ with tab7:
             st.info("🔍 **Step 1 — Intent Classification:** Intent detected as `RAG HR Policy Q&A` (Confidence: 95.1%)")
             st.success("⚙️ **Step 2 — Engine Execution:** Routing query vector to `Policy Vector Search Index`...")
             
-            st.markdown("""
-            <div class="rag-box">
-                <strong style="color: #38BDF8; font-size: 1.05rem;">📄 Source Document: Business Travel & Meals Stipend Policy</strong><br>
-                <span style="color: #E2E8F0;">💬 <strong>Answer:</strong> For official business travel, the company covers flights, hotel stays, and provides a daily food stipend of $75 per day. Receipts must be uploaded within 14 days of return.</span>
-            </div>
-            """, unsafe_allow_html=True)
+            st.success("💬 **Answer:** For official business travel, the company covers flights, hotel stays, and provides a daily food stipend of $75 per day. Receipts must be uploaded within 14 days of return.")
+            st.info("📜 **Source Document:** Business Travel & Meals Stipend Policy")
