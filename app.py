@@ -200,7 +200,7 @@ if navigation == "📊 Executive Overview & Org Heatmap":
         })
         
     df_org = pd.DataFrame(summary_data)
-    st.dataframe(df_org, use_container_state=True)
+    st.dataframe(df_org, use_container_width=True)
     
     st.markdown("### 💡 Leadership Decision Support Summary")
     st.success(
@@ -297,7 +297,7 @@ elif navigation == "🧩 Semantic Skill Gap Engine":
         st.markdown("### ✅ Matched / Satisfied Skills")
         df_matched = pd.DataFrame(gap_info['matched'])
         if not df_matched.empty:
-            st.dataframe(df_matched, use_container_state=True)
+            st.dataframe(df_matched, use_container_width=True)
         else:
             st.info("No matching skills found.")
             

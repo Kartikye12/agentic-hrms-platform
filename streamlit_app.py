@@ -1,6 +1,4 @@
-import importlib.util
+import runpy
 
-# Load and execute app.py
-spec = importlib.util.spec_from_file_location("app", "app.py")
-app = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(app)
+# Run app.py in main scope for Streamlit Cloud
+runpy.run_path("app.py", run_name="__main__")
