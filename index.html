@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic HRMS Platform — Enterprise Workforce Intelligence</title>
+  
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       SIDEBAR NAVIGATION
+       ========================================================================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-brain"></i>
+      </div>
+      <div class="brand-text">
+        <h2>Agentic HRMS</h2>
+        <span>Workforce Intelligence</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <div class="nav-group-label">Core Platform</div>
+      
+      <li class="nav-item active" data-tab="tab-overview">
+        <button><i class="fa-solid fa-chart-pie"></i> Executive Overview</button>
+      </li>
+      <li class="nav-item" data-tab="tab-attrition">
+        <button><i class="fa-solid fa-user-xmark"></i> Attrition Risk</button>
+      </li>
+      <li class="nav-item" data-tab="tab-skillgap">
+        <button><i class="fa-solid fa-layer-group"></i> Skill Gap Engine</button>
+      </li>
+      <li class="nav-item" data-tab="tab-recommender">
+        <button><i class="fa-solid fa-graduation-cap"></i> Course Recommender</button>
+      </li>
+      <li class="nav-item" data-tab="tab-career">
+        <button><i class="fa-solid fa-route"></i> Career Trajectory</button>
+      </li>
+
+      <div class="nav-group-label">Enterprise Intelligence</div>
+      <li class="nav-item" data-tab="tab-leadership">
+        <button><i class="fa-solid fa-users-gear"></i> Leadership Heatmap</button>
+      </li>
+      <li class="nav-item" data-tab="tab-rag">
+        <button><i class="fa-solid fa-book-open"></i> HR Policy RAG</button>
+      </li>
+      <li class="nav-item" data-tab="tab-agent">
+        <button><i class="fa-solid fa-robot"></i> Multi-Agent Router</button>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="colab-status-card">
+        <div class="status-indicator">
+          <span class="dot" id="status-dot"></span>
+          <span id="status-text">Client Engine (Offline)</span>
+        </div>
+        <button class="btn-icon" id="open-api-modal" title="Colab API Settings" style="padding:0.4rem 0.6rem;">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
+       MAIN CONTENT LAYOUT
+       ========================================================================== -->
+  <div class="main-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-title">
+        <h1 id="current-view-title">Executive Dashboard Overview</h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn-icon" id="btn-colab-connect">
+          <i class="fa-solid fa-link"></i> Connect Colab URL
+        </button>
+        <a href="https://colab.research.google.com" target="_blank" class="btn-primary" style="text-decoration:none;">
+          <i class="fa-solid fa-code"></i> Open Colab Notebook
+        </a>
+      </div>
+    </header>
+
+    <div class="content-body">
+
+      <!-- ==========================================================================
+           TAB 1: EXECUTIVE OVERVIEW
+           ========================================================================== -->
+      <div class="tab-pane active" id="tab-overview">
+        <div class="page-header">
+          <h2>Workforce Intelligence Platform</h2>
+          <p>An enterprise AI/ML system combining predictive analytics, skills intelligence, recommendation systems, RAG and agentic workflows.</p>
+        </div>
+
+        <div class="grid-metrics">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Total Headcount</span>
+              <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <div class="metric-value">20,000</div>
+            <div class="metric-sub">Enterprise Workforce Pool</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Attrition Accuracy</span>
+              <div class="metric-icon"><i class="fa-solid fa-bullseye"></i></div>
+            </div>
+            <div class="metric-value" style="color:var(--emerald);">84.2%</div>
+            <div class="metric-sub">RandomForest Model Score</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Semantic Skill Matching</span>
+              <div class="metric-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            </div>
+            <div class="metric-value" style="color:var(--cyan);">Sentence-Transformers</div>
+            <div class="metric-sub">all-MiniLM-L6-v2 Embeddings</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Policy Q&A Retrieval</span>
+              <div class="metric-icon"><i class="fa-solid fa-bolt"></i></div>
+            </div>
+            <div class="metric-value" style="color:var(--purple);">Gemini 2.0 Flash</div>
+            <div class="metric-sub">Grounded Vector RAG</div>
+          </div>
+        </div>
+
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-diagram-project" style="color:var(--primary);"></i> 7-Layer Platform Architecture</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div class="tool-step"><div class="step-num">1</div><div><strong>User / API Layer:</strong> React UI + FastAPI gateway</div></div>
+              <div class="tool-step"><div class="step-num">2</div><div><strong>Agent Orchestration:</strong> LangGraph multi-agent router</div></div>
+              <div class="tool-step"><div class="step-num">3</div><div><strong>Specialized Agents:</strong> Recruitment, Policy, Workforce, Upskilling</div></div>
+              <div class="tool-step"><div class="step-num">4</div><div><strong>AI / ML Engine:</strong> RandomForest, SentenceTransformers, Recommender</div></div>
+              <div class="tool-step"><div class="step-num">5</div><div><strong>Knowledge / Retrieval:</strong> Grounded Vector Search & RAG</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span><i class="fa-solid fa-chart-line" style="color:var(--cyan);"></i> Real-Life Enterprise Impact</span>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">
+              A company expanding its AI division requires 500 AI roles over 18 months. The platform analyzes internal skill readiness against external recruitment costs:
+            </p>
+            <div class="result-box" style="min-height:auto;">
+👉 Target Demand: 500 AI Roles Required
+👉 Internally Available: 320 Employees
+👉 Net Skill Shortfall: 180 Headcount
+-----------------------------------------------
+💡 Strategic Decision Support Recommendation:
+• Reskill 120 employees via targeted LMS courses
+• Externally hire 60 senior specialists</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB 2: ATTRITION RISK & EXPLAINABILITY
+           ========================================================================== -->
+      <div class="tab-pane" id="tab-attrition">
+        <div class="page-header">
+          <h2>Predictive Attrition Risk & Explainability</h2>
+          <p>Random Forest ML Model trained on IBM Employee Attrition Dataset predicting resignation probability & top risk drivers.</p>
+        </div>
+
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-title">Select Employee Profile</div>
+            <div class="form-group">
+              <label>Employee Index in Test Dataset (0 – 293)</label>
+              <input type="number" id="attr-emp-idx" value="0" min="0" max="293">
+            </div>
+            <button class="btn-primary" id="btn-predict-attrition">
+              <i class="fa-solid fa-microchip"></i> Predict Risk & Explain
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Prediction Result & Risk Meter</div>
+            <div class="risk-meter-container">
+              <div class="risk-score-display" id="attr-score">-- %</div>
+              <div class="risk-level-badge risk-low" id="attr-badge">--</div>
+            </div>
+            <div style="margin-top:1rem;">
+              <strong style="font-size:0.85rem; color:var(--text-muted);">Top Risk Drivers (Explainability):</strong>
+              <div class="tag-list" id="attr-drivers-list">
+                <span class="tag">Click Predict to evaluate employee</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB 3: SKILL GAP ENGINE
+           ========================================================================== -->
+      <div class="tab-pane" id="tab-skillgap">
+        <div class="page-header">
+          <h2>Semantic Skill Gap Detection</h2>
+          <p>Runs on embeddings & cosine similarity, not rigid keyword matching. Recognizes related concepts like "PyTorch" ≈ "Deep Learning with PyTorch".</p>
+        </div>
+
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-title">Skill Assessment Inputs</div>
+            <div class="form-group">
+              <label>Select Employee</label>
+              <select id="sg-emp-select">
+                <option value="E101">E101 (Python, SQL, Pandas, Excel)</option>
+                <option value="E102">E102 (JavaScript, HTML, CSS, Communication)</option>
+                <option value="E103" selected>E103 (Python, Deep Learning with PyTorch, Statistics, SQL)</option>
+                <option value="E104">E104 (Python, SQL, Machine Learning, Statistics)</option>
+                <option value="E105">E105 (AWS, Linux, Docker, Python)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Select Target Role</label>
+              <select id="sg-role-select">
+                <option value="ML Engineer" selected>ML Engineer</option>
+                <option value="Data Scientist">Data Scientist</option>
+                <option value="Software Engineer">Software Engineer</option>
+                <option value="Cloud Architect">Cloud Architect</option>
+              </select>
+            </div>
+            <button class="btn-primary" id="btn-calc-skillgap">
+              <i class="fa-solid fa-calculator"></i> Calculate Semantic Skill Gap
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Skill Gap Output</div>
+            <div id="sg-result-container">
+              <div class="result-box" id="sg-output-box">Select employee and target role to compute gap...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB 4: COURSE RECOMMENDER
+           ========================================================================== -->
+      <div class="tab-pane" id="tab-recommender">
+        <div class="page-header">
+          <h2>Personalized Upskilling Recommender</h2>
+          <p>Maps identified skill gaps directly to prioritized internal LMS modules & external certified courses.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Course Recommendation Generator</div>
+          <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+            <div style="flex:1; min-width:200px;">
+              <label style="font-size:0.85rem; color:var(--text-muted);">Employee ID</label>
+              <select id="rec-emp-select">
+                <option value="E103" selected>E103</option>
+                <option value="E101">E101</option>
+                <option value="E102">E102</option>
+                <option value="E104">E104</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:200px;">
+              <label style="font-size:0.85rem; color:var(--text-muted);">Target Role</label>
+              <select id="rec-role-select">
+                <option value="ML Engineer" selected>ML Engineer</option>
+                <option value="Data Scientist">Data Scientist</option>
+                <option value="Cloud Architect">Cloud Architect</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+              <button class="btn-primary" id="btn-get-recs"><i class="fa-solid fa-list-check"></i> Generate Recommendations</button>
+            </div>
+          </div>
+
+          <div id="rec-cards-container" class="tag-list">
+            <!-- Recommendation cards injected via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB 5: CAREER TRAJECTORY
+           ========================================================================== -->
+      <div class="tab-pane" id="tab-career">
+        <div class="page-header">
+          <h2>Career Path Trajectory Simulation</h2>
+          <p>Projects multi-stage readiness score improvement (e.g. 62% → 91%) after completing recommended learning paths.</p>
+        </div>
+
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-title">Career Simulation Settings</div>
+            <div class="form-group">
+              <label>Employee ID</label>
+              <select id="car-emp-select"><option value="E103" selected>E103</option><option value="E101">E101</option></select>
+            </div>
+            <div class="form-group">
+              <label>Current Role</label>
+              <input type="text" id="car-curr-role" value="Data Analyst">
+            </div>
+            <div class="form-group">
+              <label>Target Role</label>
+              <select id="car-tgt-role"><option value="ML Engineer" selected>ML Engineer</option><option value="Data Scientist">Data Scientist</option></select>
+            </div>
+            <button class="btn-primary" id="btn-sim-career"><i class="fa-solid fa-play"></i> Simulate Trajectory</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Trajectory Roadmap & Projected Readiness</div>
+            <div class="result-box" id="car-output-box">Run simulation to view trajectory milestones...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB 6: LEADERSHIP HEATMAP
+           ========================================================================== -->
+      <div class="tab-pane" id="tab-leadership">
+        <div class="page-header">
+          <h2>Organizational Skill Heatmap & Decision Support</h2>
+          <p>Executive-level decision support calculating company-wide headcount skill shortfalls & Hire vs. Upskill financial split.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Organizational Strategic Shortfall Analysis</span>
+            <button class="btn-primary" id="btn-gen-heatmap"><i class="fa-solid fa-arrows-rotate"></i> Recalculate Heatmap</button>
+          </div>
+
+          <div class="result-box" id="leadership-rec-box" style="margin-bottom:1.5rem; background:rgba(99, 102, 241, 0.1); border-color:rgba(99, 102, 241, 0.3);">
+            Loading Organizational Executive Summary...
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Target Role</th>
+                  <th>Headcount Demand</th>
+                  <th>Internally Available</th>
+                  <th>Net Shortfall</th>
+                  <th>Reskill Target (Internal)</th>
+                  <th>External Hire Target</th>
+                </tr>
+              </thead>
+              <tbody id="leadership-table-body">
+                <!-- Table rows injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB 7: HR POLICY RAG
+           ========================================================================== -->
+      <div class="tab-pane" id="tab-rag">
+        <div class="page-header">
+          <h2>Grounded HR Policy Vector RAG</h2>
+          <p>Retrieves exact policy chunks from corporate handbook with Gemini 2.0 LLM natural-language generation.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Ask HR Policy Question</div>
+          <div class="form-group">
+            <input type="text" id="rag-query-input" placeholder="e.g. How many days of parental leave do I get?" value="How many days of parental leave do I get?">
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+            <span style="font-size:0.8rem; color:var(--text-muted); align-self:center;">Try:</span>
+            <button class="tag rag-chip">Parental Leave</button>
+            <button class="tag rag-chip">Casual Leave</button>
+            <button class="tag rag-chip">Work From Home</button>
+            <button class="tag rag-chip">Payroll Date</button>
+          </div>
+          <button class="btn-primary" id="btn-ask-rag"><i class="fa-solid fa-magnifying-glass"></i> Search Policy & Answer</button>
+
+          <div style="margin-top:1.5rem;">
+            <div class="result-box" id="rag-answer-box">Click Search Policy & Answer to query the vector index...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB 8: MULTI-AGENT ROUTER
+           ========================================================================== -->
+      <div class="tab-pane" id="tab-agent">
+        <div class="page-header">
+          <h2>Multi-Agent Orchestrator & Tool Routing</h2>
+          <p>Classifies natural language intent and routes requests across specialized AI engines with governed tool execution.</p>
+        </div>
+
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-title">Agent Router Entry Point</div>
+            <div class="form-group">
+              <label>User Natural Language Question</label>
+              <input type="text" id="agent-query" value="Show leadership heatmap for organizational skill gap">
+            </div>
+            <div class="form-group">
+              <label>Employee ID Context (Optional)</label>
+              <select id="agent-emp-id"><option value="">None</option><option value="E103" selected>E103</option></select>
+            </div>
+            <button class="btn-primary" id="btn-run-agent"><i class="fa-solid fa-network-wired"></i> Orchestrate Request</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Agent Orchestration Response</div>
+            <div class="result-box" id="agent-output-box">Submit query to execute agent tool sequence...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       COLAB API CONNECTION MODAL
+       ========================================================================== -->
+  <div class="modal-backdrop" id="colab-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-link" style="color:var(--cyan);"></i> Connect to Google Colab Backend</h3>
+        <button class="btn-close" id="close-colab-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.25rem;">
+        Paste your shareable public Gradio URL (e.g. <code>https://xxxx.gradio.live</code>) generated by <code>demo.launch(share=True)</code> in Colab.
+      </p>
+      <div class="form-group">
+        <label>Colab Gradio Public URL</label>
+        <input type="text" id="colab-url-input" placeholder="https://xxxx.gradio.live">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+        <button class="btn-icon" id="btn-use-client-fallback">Use Client Fallback</button>
+        <button class="btn-primary" id="btn-save-colab-url">Save & Test Connection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
