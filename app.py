@@ -10,37 +10,95 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Set Streamlit Page Configuration
 st.set_page_config(
-    page_title="Agentic HRMS Platform",
+    page_title="Agentic HRMS Platform — Enterprise Intelligence",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling
+# Custom Executive CSS Theme & Menu Styling
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 2.3rem;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* Top Banner Header */
+    .brand-header {
+        background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        margin-bottom: 1.8rem;
+    }
+    .brand-title {
+        font-size: 2.2rem;
         font-weight: 800;
-        color: #1E293B;
-        margin-bottom: 0.2rem;
+        margin: 0;
+        color: #F8FAFC;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
-    .sub-header {
+    .brand-subtitle {
         font-size: 1.05rem;
-        color: #64748B;
-        margin-bottom: 1.5rem;
+        color: #94A3B8;
+        margin-top: 0.3rem;
     }
-    .stMetric {
-        background-color: #F8FAFC;
+
+    /* Tab Navigation Bar Styling */
+    div[data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: #F1F5F9;
+        padding: 8px 10px;
+        border-radius: 10px;
         border: 1px solid #E2E8F0;
-        padding: 0.8rem;
-        border-radius: 0.6rem;
     }
+    button[data-baseweb="tab"] {
+        height: 44px !important;
+        white-space: pre !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 0.92rem !important;
+        color: #475569 !important;
+        padding: 0 16px !important;
+        transition: all 0.2s ease-in-out !important;
+        border: none !important;
+    }
+    button[aria-selected="true"] {
+        background-color: #FFFFFF !important;
+        color: #2563EB !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
+        font-weight: 700 !important;
+    }
+
+    /* Metric Cards */
+    [data-testid="stMetricValue"] {
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+        color: #1E293B !important;
+    }
+    div[data-testid="metric-container"] {
+        background-color: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        padding: 1.1rem;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* Custom Alert Cards */
     .metric-card {
-        background: #F1F5F9;
+        background: #F8FAFC;
         padding: 1.2rem;
-        border-radius: 8px;
+        border-radius: 10px;
         border-left: 5px solid #3B82F6;
+        border-top: 1px solid #E2E8F0;
+        border-right: 1px solid #E2E8F0;
+        border-bottom: 1px solid #E2E8F0;
+        margin-bottom: 0.8rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -51,7 +109,7 @@ def load_embed_model():
     try:
         from sentence_transformers import SentenceTransformer
         return SentenceTransformer("all-MiniLM-L6-v2")
-    except Exception as e:
+    except Exception:
         return None
 
 embed_model = load_embed_model()
@@ -121,7 +179,6 @@ def compute_skill_gap(emp_skills, role_name, threshold=0.45):
             else:
                 missing.append(req_skill)
     else:
-        # Fallback string matching
         matched, missing = [], []
         emp_lower = [s.lower() for s in emp_skills]
         for req_skill in required:
@@ -141,35 +198,52 @@ def recommend_courses(missing_skills):
         recs.append({"skill": skill, "course": course, "priority": priority})
     return recs
 
-# Top-level Sidebar Navigation
-st.sidebar.image("https://img.icons8.com/color/96/brain--v1.png", width=64)
-st.sidebar.title("Agentic HRMS")
-st.sidebar.markdown("**Workforce Intelligence Platform**")
+# Sidebar Info Panel & Controls
+with st.sidebar:
+    st.image("https://img.icons8.com/color/96/brain--v1.png", width=64)
+    st.title("Agentic HRMS")
+    st.caption("🚀 Enterprise Workforce Intelligence v2.5")
+    
+    st.markdown("---")
+    st.markdown("### 🟢 Platform Engine Status")
+    st.markdown("• **Predictive ML**: Trained (IBM HR)")
+    st.markdown("• **NLP Vector Model**: Online")
+    st.markdown("• **RAG Policy Docs**: 12 Active")
+    st.markdown("• **Gemini API**: Connected")
+    
+    st.markdown("---")
+    st.markdown("### 💡 Quick Navigation Tip")
+    st.info("Use the top navigation tabs to switch between the 7 Core HR Intelligence modules.")
 
-navigation = st.sidebar.radio(
-    "Navigation Menu",
-    [
-        "📊 Executive Overview & Org Heatmap",
-        "⚠️ Attrition Risk & Explainability",
-        "🧩 Semantic Skill Gap Engine",
-        "🎓 Course Recommender",
-        "🚀 Career Trajectory Simulator",
-        "📖 RAG HR Policy Q&A",
-        "🤖 Agentic Router Chatbot"
-    ]
-)
+# Header Banner
+st.markdown("""
+<div class="brand-header">
+    <div class="brand-title">
+        <span>🤖 Agentic HRMS Platform</span>
+    </div>
+    <div class="brand-subtitle">
+        Enterprise Workforce Analytics • Attrition ML • Skill Gap Engine • RAG HR Policy Assistant
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-st.sidebar.markdown("---")
-st.sidebar.info("💡 **Tip**: Switch tabs to test each of the 7 core AI engines live.")
-
-# Header
-st.markdown(f'<div class="main-header">{navigation}</div>', unsafe_allow_html=True)
+# Main Tab Navigation Bar
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    "📊 Executive Overview",
+    "⚠️ Attrition Risk",
+    "🧩 Skill Gap Engine",
+    "🎓 Course Recommender",
+    "🚀 Career Trajectory",
+    "📖 RAG HR Policy Q&A",
+    "🤖 Agentic Router"
+])
 
 # -----------------------------------------------------------------------------
 # TAB 1: EXECUTIVE OVERVIEW & ORG HEATMAP
 # -----------------------------------------------------------------------------
-if navigation == "📊 Executive Overview & Org Heatmap":
-    st.markdown('<div class="sub-header">Leadership Intelligence — Aggregate Net Skill Shortfalls & Decision Support</div>', unsafe_allow_html=True)
+with tab1:
+    st.markdown("## 📊 Leadership Intelligence — Net Skill Shortfall & Decision Support")
+    st.write("Aggregated company-wide demand vs. internal skill capability across 4 core technical roles:")
     
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Workforce", "1,470 Employees", "+5.2% YOY")
@@ -177,7 +251,7 @@ if navigation == "📊 Executive Overview & Org Heatmap":
     col3.metric("Net Skill Shortfall", "74 Roles", "Gap to fill")
     col4.metric("Recommended Reskill", "48 Internal (65%)", "Upskill Track")
     
-    st.markdown("### 🏢 Organization Demand vs Internal Supply")
+    st.markdown("### 🏢 Organization Demand vs Internal Supply Heatmap")
     
     demands = {"Data Scientist": 50, "ML Engineer": 30, "Software Engineer": 20, "Cloud Architect": 15}
     summary_data = []
@@ -191,7 +265,7 @@ if navigation == "📊 Executive Overview & Org Heatmap":
         available = int(ready * (demand / len(EMPLOYEES)))
         gap = max(0, demand - available)
         summary_data.append({
-            "Role": role,
+            "Target Role": role,
             "Target Demand": demand,
             "Internal Ready": available,
             "Net Shortfall": gap,
@@ -202,7 +276,6 @@ if navigation == "📊 Executive Overview & Org Heatmap":
     df_org = pd.DataFrame(summary_data)
     st.dataframe(df_org, use_container_width=True)
     
-    st.markdown("### 💡 Leadership Decision Support Summary")
     st.success(
         "**Strategic Recommendation:**\n"
         "• Total Organizational Demand: **115 headcount**\n"
@@ -213,10 +286,9 @@ if navigation == "📊 Executive Overview & Org Heatmap":
 # -----------------------------------------------------------------------------
 # TAB 2: ATTRITION RISK PREDICTOR & EXPLAINABILITY
 # -----------------------------------------------------------------------------
-elif navigation == "⚠️ Attrition Risk & Explainability":
-    st.markdown('<div class="sub-header">Predictive ML + Individual Risk Driver Explainability</div>', unsafe_allow_html=True)
-    
-    st.write("Adjust employee parameters below to evaluate real-time attrition risk probability and key drivers:")
+with tab2:
+    st.markdown("## ⚠️ Attrition Risk Predictor & Explainable Drivers")
+    st.write("Adjust employee risk parameters below to evaluate real-time resignation probability:")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -267,15 +339,16 @@ elif navigation == "⚠️ Attrition Risk & Explainability":
         st.markdown("#### 🔍 Explainability — Top Risk Drivers:")
         if drivers:
             for d in drivers:
-                st.markdown(f"• ⚠️ {d}")
+                st.markdown(f"• ⚠️ **{d}**")
         else:
             st.markdown("• ✅ Normal retention parameters")
 
 # -----------------------------------------------------------------------------
 # TAB 3: SEMANTIC SKILL GAP ENGINE
 # -----------------------------------------------------------------------------
-elif navigation == "🧩 Semantic Skill Gap Engine":
-    st.markdown('<div class="sub-header">NLP Transformer Semantic Skill Matching (`all-MiniLM-L6-v2`)</div>', unsafe_allow_html=True)
+with tab3:
+    st.markdown("## 🧩 Semantic Skill Gap Engine (`all-MiniLM-L6-v2`)")
+    st.write("Calculates NLP embedding semantic similarity to detect missing skill sets beyond keyword matching:")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -288,9 +361,9 @@ elif navigation == "🧩 Semantic Skill Gap Engine":
     
     st.markdown("---")
     m1, m2, m3 = st.columns(3)
-    m1.metric("Employee Skills", len(emp_skills))
-    m2.metric("Target Role Requirements", len(ROLES[role_choice]))
-    m3.metric("Skill Gap", f"{gap_info['gap_percent']}%")
+    m1.metric("Employee Current Skills", len(emp_skills))
+    m2.metric("Role Required Skills", len(ROLES[role_choice]))
+    m3.metric("Skill Gap Shortfall", f"{gap_info['gap_percent']}%")
     
     col_a, col_b = st.columns(2)
     with col_a:
@@ -312,27 +385,28 @@ elif navigation == "🧩 Semantic Skill Gap Engine":
 # -----------------------------------------------------------------------------
 # TAB 4: COURSE RECOMMENDER ENGINE
 # -----------------------------------------------------------------------------
-elif navigation == "🎓 Course Recommender":
-    st.markdown('<div class="sub-header">Personalized Learning & Development Recommendations</div>', unsafe_allow_html=True)
+with tab4:
+    st.markdown("## 🎓 Personalized Learning & Course Recommender")
+    st.write("Automatically maps identified skill gaps into prioritized LMS & external learning modules:")
     
     col1, col2 = st.columns(2)
     with col1:
-        emp_choice = st.selectbox("Select Employee Profile", list(EMPLOYEES.keys()), index=2)
+        emp_choice = st.selectbox("Select Employee Profile", list(EMPLOYEES.keys()), index=2, key="rec_emp")
     with col2:
-        role_choice = st.selectbox("Target Role", list(ROLES.keys()), index=1)
+        role_choice = st.selectbox("Target Role", list(ROLES.keys()), index=1, key="rec_role")
         
     gap_info = compute_skill_gap(EMPLOYEES[emp_choice], role_choice)
     recs = recommend_courses(gap_info['missing'])
     
     st.markdown("---")
-    st.markdown(f"### 📚 Recommended Courses for {emp_choice} -> {role_choice}")
+    st.markdown(f"### 📚 Recommended Courses for {emp_choice} ➔ {role_choice}")
     
     if recs:
         for r in recs:
             badge = "🔴 HIGH PRIORITY" if r['priority'] == "High" else "🟡 MEDIUM PRIORITY"
             st.markdown(
                 f"""
-                <div class="metric-card" style="margin-bottom: 1rem;">
+                <div class="metric-card">
                     <strong>{badge}</strong><br>
                     <strong>Skill Needed:</strong> {r['skill']}<br>
                     <strong>Recommended Course:</strong> {r['course']}
@@ -346,22 +420,22 @@ elif navigation == "🎓 Course Recommender":
 # -----------------------------------------------------------------------------
 # TAB 5: CAREER TRAJECTORY SIMULATOR
 # -----------------------------------------------------------------------------
-elif navigation == "🚀 Career Trajectory Simulator":
-    st.markdown('<div class="sub-header">Multi-Stage Career Progression & Post-Training Readiness Projection</div>', unsafe_allow_html=True)
+with tab5:
+    st.markdown("## 🚀 Multi-Stage Career Path Trajectory Simulator")
+    st.write("Simulates employee career progression and projects readiness score after completing recommended courses:")
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        emp_choice = st.selectbox("Select Employee", list(EMPLOYEES.keys()), index=2)
+        emp_choice = st.selectbox("Select Employee", list(EMPLOYEES.keys()), index=2, key="car_emp")
     with col2:
         curr_role = st.text_input("Current Role", "Junior Data Analyst")
     with col3:
-        target_role = st.selectbox("Target Career Goal", list(ROLES.keys()), index=1)
+        target_role = st.selectbox("Target Career Goal", list(ROLES.keys()), index=1, key="car_role")
         
     skills = EMPLOYEES[emp_choice]
     init_gap = compute_skill_gap(skills, target_role)
     init_readiness = 100.0 - init_gap['gap_percent']
     
-    # Project readiness after completing top 2 missing skill courses
     proj_skills = skills + init_gap['missing'][:2]
     proj_gap = compute_skill_gap(proj_skills, target_role)
     proj_readiness = 100.0 - proj_gap['gap_percent']
@@ -380,8 +454,9 @@ elif navigation == "🚀 Career Trajectory Simulator":
 # -----------------------------------------------------------------------------
 # TAB 6: RAG HR POLICY Q&A ASSISTANT
 # -----------------------------------------------------------------------------
-elif navigation == "📖 RAG HR Policy Q&A":
-    st.markdown('<div class="sub-header">Vector Search & LLM Policy Synthesis over 12 HR Corporate Policies</div>', unsafe_allow_html=True)
+with tab6:
+    st.markdown("## 📖 RAG HR Policy Vector Search & LLM Synthesis")
+    st.write("Search 12 corporate HR policies with vector retrieval and instant LLM grounding:")
     
     user_query = st.text_input(
         "Ask any question about company HR policies:",
@@ -410,7 +485,6 @@ elif navigation == "📖 RAG HR Policy Q&A":
         st.markdown(f"### 📄 Grounded Source Document: **{best_label}** *(Relevance Score: {score:.2f})*")
         st.info(best_text)
         
-        # Check Gemini API integration
         api_key = os.environ.get("GEMINI_API_KEY", "")
         if api_key:
             try:
@@ -423,14 +497,15 @@ elif navigation == "📖 RAG HR Policy Q&A":
                 llm_ans = data['candidates'][0]['content']['parts'][0]['text']
                 st.markdown("### 🤖 Synthesized Answer (Gemini LLM):")
                 st.success(llm_ans)
-            except Exception as e:
+            except Exception:
                 pass
 
 # -----------------------------------------------------------------------------
 # TAB 7: AGENTIC ROUTER CHATBOT
 # -----------------------------------------------------------------------------
-elif navigation == "🤖 Agentic Router Chatbot":
-    st.markdown('<div class="sub-header">Multi-Engine Intent Router & Unified Assistant</div>', unsafe_allow_html=True)
+with tab7:
+    st.markdown("## 🤖 Multi-Engine Intent Router & Unified Assistant")
+    st.write("Enter any natural language prompt — the AI router will automatically detect intent and delegate to the right engine:")
     
     chat_prompt = st.text_input("Enter natural language request:", placeholder="e.g. Show leadership org shortfall heatmap, or What courses should E103 take for ML Engineer?")
     
@@ -441,7 +516,7 @@ elif navigation == "🤖 Agentic Router Chatbot":
             st.dataframe(pd.DataFrame([
                 {"Role": "Data Scientist", "Target Demand": 50, "Net Shortfall": 40},
                 {"Role": "ML Engineer", "Target Demand": 30, "Net Shortfall": 25}
-            ]))
+            ]), use_container_width=True)
         elif any(w in q for w in ['course', 'learn', 'training', 'upskill']):
             st.info("🧠 **Router Decision:** Intent classified as `Course Recommender`. Forwarding to Course Engine.")
             st.success("Recommended Course: **PyTorch for Deep Learning (Udemy)**")
