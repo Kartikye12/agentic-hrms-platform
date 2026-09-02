@@ -4,6 +4,8 @@ import numpy as np
 import os
 import json
 import urllib.request
+import plotly.express as px
+import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics.pairwise import cosine_similarity
@@ -16,7 +18,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Executive CSS Theme & Menu Styling
+# Custom Executive CSS Theme & Ultra-High Visibility Dark/Light Mode Styling
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -29,10 +31,11 @@ st.markdown("""
     .brand-header {
         background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
         padding: 1.5rem 2rem;
-        border-radius: 12px;
+        border-radius: 14px;
         color: white;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        margin-bottom: 1.8rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .brand-title {
         font-size: 2.2rem;
@@ -44,60 +47,73 @@ st.markdown("""
         gap: 12px;
     }
     .brand-subtitle {
-        font-size: 1.05rem;
+        font-size: 1.02rem;
         color: #94A3B8;
-        margin-top: 0.3rem;
+        margin-top: 0.4rem;
     }
 
     /* Tab Navigation Bar Styling */
     div[data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: #F1F5F9;
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: 1px solid #E2E8F0;
+        background-color: rgba(15, 23, 42, 0.7);
+        padding: 8px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 1rem;
     }
     button[data-baseweb="tab"] {
         height: 44px !important;
         white-space: pre !important;
         border-radius: 8px !important;
         font-weight: 600 !important;
-        font-size: 0.92rem !important;
-        color: #475569 !important;
-        padding: 0 16px !important;
-        transition: all 0.2s ease-in-out !important;
+        font-size: 0.93rem !important;
+        color: #94A3B8 !important;
+        padding: 0 18px !important;
+        transition: all 0.25s ease-in-out !important;
         border: none !important;
     }
     button[aria-selected="true"] {
-        background-color: #FFFFFF !important;
-        color: #2563EB !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
         font-weight: 700 !important;
     }
 
-    /* Metric Cards */
+    /* High Visibility Metrics */
     [data-testid="stMetricValue"] {
-        font-size: 1.8rem !important;
-        font-weight: 700 !important;
-        color: #1E293B !important;
+        font-size: 1.9rem !important;
+        font-weight: 800 !important;
+        color: #38BDF8 !important; /* Bright Cyan for high visibility */
+    }
+    [data-testid="stMetricLabel"] {
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        color: #CBD5E1 !important;
     }
     div[data-testid="metric-container"] {
-        background-color: #FFFFFF;
-        border: 1px solid #E2E8F0;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         padding: 1.1rem;
-        border-radius: 10px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
     }
 
-    /* Custom Alert Cards */
+    /* Custom Recommendation Alert Card */
+    .rec-card {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.15) 100%);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-left: 6px solid #10B981;
+        padding: 1.2rem 1.5rem;
+        border-radius: 12px;
+        color: #E2E8F0;
+        margin-top: 1rem;
+    }
     .metric-card {
-        background: #F8FAFC;
+        background: rgba(30, 41, 59, 0.5);
         padding: 1.2rem;
         border-radius: 10px;
         border-left: 5px solid #3B82F6;
-        border-top: 1px solid #E2E8F0;
-        border-right: 1px solid #E2E8F0;
-        border-bottom: 1px solid #E2E8F0;
+        border: 1px solid rgba(255, 255, 255, 0.08);
         margin-bottom: 0.8rem;
     }
 </style>
@@ -212,8 +228,8 @@ with st.sidebar:
     st.markdown("• **Gemini API**: Connected")
     
     st.markdown("---")
-    st.markdown("### 💡 Quick Navigation Tip")
-    st.info("Use the top navigation tabs to switch between the 7 Core HR Intelligence modules.")
+    st.markdown("### 💡 Navigation")
+    st.info("Select any top tab to switch between the 7 Core HR Intelligence engines.")
 
 # Header Banner
 st.markdown("""
@@ -251,7 +267,7 @@ with tab1:
     col3.metric("Net Skill Shortfall", "74 Roles", "Gap to fill")
     col4.metric("Recommended Reskill", "48 Internal (65%)", "Upskill Track")
     
-    st.markdown("### 🏢 Organization Demand vs Internal Supply Heatmap")
+    st.markdown("---")
     
     demands = {"Data Scientist": 50, "ML Engineer": 30, "Software Engineer": 20, "Cloud Architect": 15}
     summary_data = []
@@ -269,19 +285,45 @@ with tab1:
             "Target Demand": demand,
             "Internal Ready": available,
             "Net Shortfall": gap,
-            "Reskill Target (Internal 65%)": int(gap * 0.65),
-            "External Hire Target (35%)": int(gap * 0.35)
+            "Reskill Target (65%)": int(gap * 0.65),
+            "External Hire (35%)": int(gap * 0.35)
         })
         
     df_org = pd.DataFrame(summary_data)
-    st.dataframe(df_org, use_container_width=True)
     
-    st.success(
-        "**Strategic Recommendation:**\n"
-        "• Total Organizational Demand: **115 headcount**\n"
-        "• Net Skill Gap Shortfall: **74 roles**\n"
-        "👉 **Action Plan:** Reskill **48 internal employees** via targeted LMS learning plans and externally hire **26 senior specialists**."
-    )
+    # Left: Plotly Interactive Chart, Right: Data Table (Hidden Index)
+    col_chart, col_table = st.columns([1.1, 1])
+    
+    with col_chart:
+        st.markdown("### 📈 Demand vs Supply Visualization")
+        fig_org = px.bar(
+            df_org,
+            x="Target Role",
+            y=["Target Demand", "Internal Ready", "Net Shortfall"],
+            barmode="group",
+            color_discrete_sequence=["#38BDF8", "#10B981", "#F43F5E"],
+            labels={"value": "Headcount", "variable": "Metric"}
+        )
+        fig_org.update_layout(
+            margin=dict(l=10, r=10, t=30, b=10),
+            height=320,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        )
+        st.plotly_chart(fig_org, use_container_width=True)
+        
+    with col_table:
+        st.markdown("### 🏢 Role Capability Breakdown")
+        st.dataframe(df_org, use_container_width=True, hide_index=True)
+    
+    st.markdown("""
+    <div class="rec-card">
+        <strong>💡 Strategic Leadership Recommendation:</strong><br>
+        • Total Organizational Demand: <strong>115 headcount</strong> | Net Skill Gap Shortfall: <strong>74 roles</strong><br>
+        👉 <strong>Action Plan:</strong> Reskill <strong>48 internal employees</strong> via targeted LMS learning plans and externally hire <strong>26 senior specialists</strong>.
+    </div>
+    """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
 # TAB 2: ATTRITION RISK PREDICTOR & EXPLAINABILITY
@@ -325,23 +367,45 @@ with tab2:
     risk_score = min(99.0, risk_score)
     
     st.markdown("---")
-    res_col1, res_col2 = st.columns([1, 2])
+    res_col1, res_col2 = st.columns([1, 1.2])
     
     with res_col1:
-        if risk_score >= 50:
-            st.error(f"### Attrition Risk: HIGH ({risk_score:.1f}%)")
-            st.markdown("**Status:** At Risk of Resignation 🚨")
-        else:
-            st.success(f"### Attrition Risk: LOW ({risk_score:.1f}%)")
-            st.markdown("**Status:** Retained & Stable ✅")
+        st.markdown("### 🎯 Attrition Gauge")
+        fig_gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=risk_score,
+            number={'suffix': "%", 'font': {'color': "#F8FAFC", 'size': 36}},
+            domain={'x': [0, 1], 'y': [0, 1]},
+            gauge={
+                'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "#94A3B8"},
+                'bar': {'color': "#F43F5E" if risk_score >= 50 else "#10B981"},
+                'steps': [
+                    {'range': [0, 35], 'color': "rgba(16, 185, 129, 0.15)"},
+                    {'range': [35, 60], 'color': "rgba(245, 158, 11, 0.15)"},
+                    {'range': [60, 100], 'color': "rgba(244, 63, 94, 0.15)"}
+                ],
+                'threshold': {
+                    'line': {'color': "#F43F5E", 'width': 4},
+                    'thickness': 0.75,
+                    'value': 50
+                }
+            }
+        ))
+        fig_gauge.update_layout(height=260, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor="rgba(0,0,0,0)")
+        st.plotly_chart(fig_gauge, use_container_width=True)
             
     with res_col2:
-        st.markdown("#### 🔍 Explainability — Top Risk Drivers:")
+        st.markdown("### 🔍 Explainability — Key Risk Drivers")
+        if risk_score >= 50:
+            st.error("🚨 **STATUS:** High Resignation Risk Flagged")
+        else:
+            st.success("✅ **STATUS:** Retained & Low Risk Score")
+            
         if drivers:
             for d in drivers:
                 st.markdown(f"• ⚠️ **{d}**")
         else:
-            st.markdown("• ✅ Normal retention parameters")
+            st.markdown("• ✅ All retention parameters within normal ranges.")
 
 # -----------------------------------------------------------------------------
 # TAB 3: SEMANTIC SKILL GAP ENGINE
@@ -370,7 +434,7 @@ with tab3:
         st.markdown("### ✅ Matched / Satisfied Skills")
         df_matched = pd.DataFrame(gap_info['matched'])
         if not df_matched.empty:
-            st.dataframe(df_matched, use_container_width=True)
+            st.dataframe(df_matched, use_container_width=True, hide_index=True)
         else:
             st.info("No matching skills found.")
             
@@ -407,7 +471,7 @@ with tab4:
             st.markdown(
                 f"""
                 <div class="metric-card">
-                    <strong>{badge}</strong><br>
+                    <strong style="color: {'#F43F5E' if r['priority'] == 'High' else '#F59E0B'};">{badge}</strong><br>
                     <strong>Skill Needed:</strong> {r['skill']}<br>
                     <strong>Recommended Course:</strong> {r['course']}
                 </div>
@@ -516,7 +580,7 @@ with tab7:
             st.dataframe(pd.DataFrame([
                 {"Role": "Data Scientist", "Target Demand": 50, "Net Shortfall": 40},
                 {"Role": "ML Engineer", "Target Demand": 30, "Net Shortfall": 25}
-            ]), use_container_width=True)
+            ]), use_container_width=True, hide_index=True)
         elif any(w in q for w in ['course', 'learn', 'training', 'upskill']):
             st.info("🧠 **Router Decision:** Intent classified as `Course Recommender`. Forwarding to Course Engine.")
             st.success("Recommended Course: **PyTorch for Deep Learning (Udemy)**")
